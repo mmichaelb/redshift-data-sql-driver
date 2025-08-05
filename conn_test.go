@@ -37,6 +37,18 @@ func TestRewriteQuery(t *testing.T) {
 			paramsCount: 1,
 			expected:    `SELECT '3$1$' FROM table WHERE "$column" = :1 AND column1 > :2 AND column2 < :1`,
 		},
+		{
+			casename:    "$ rewrite complex, empty quotes",
+			query:       `SELECT CONCAT('group ', '', u.usename, '') AS groupname FROM table WHERE "col1" = $1 AND "col2" = $2`,
+			paramsCount: 2,
+			expected:    `SELECT CONCAT('group ', '', u.usename, '') AS groupname FROM table WHERE "col1" = :1 AND "col2" = :2`,
+		},
+		{
+			casename:    "$ rewrite complex, escaped quote",
+			query:       `SELECT CONCAT('group ', '''', u.usename, '''') AS groupname FROM table WHERE "col1" = $1 AND "col2" = $2`,
+			paramsCount: 2,
+			expected:    `SELECT CONCAT('group ', '''', u.usename, '''') AS groupname FROM table WHERE "col1" = :1 AND "col2" = :2`,
+		},
 	}
 	for _, c := range cases {
 		t.Run(c.casename, func(t *testing.T) {

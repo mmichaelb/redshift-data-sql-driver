@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -168,9 +169,11 @@ func rewriteQuery(query string, paramsCount int) string {
 	stack := make([]rune, 0)
 	var exclamationCount int
 	for _, r := range query {
-		if len(stack) > 0 {
-			if r == stack[len(stack)-1] {
-				stack = stack[:len(stack)-1]
+		quotingActive := len(stack) > 0
+		if quotingActive {
+			runeFoundIndex := slices.Index(stack, r)
+			if runeFoundIndex != -1 {
+				stack = stack[:runeFoundIndex]
 				runes = append(runes, r)
 				continue
 			}
@@ -185,8 +188,7 @@ func rewriteQuery(query string, paramsCount int) string {
 				continue
 			}
 		}
-		switch r {
-		case '"', '\'':
+		if r == '"' || r == '\'' {
 			stack = append(stack, r)
 		}
 		runes = append(runes, r)
