@@ -72,7 +72,7 @@ func (conn *redshiftDataConn) BeginTx(ctx context.Context, opts driver.TxOptions
 		conn.delayedResult = nil
 		return nil
 	}
-	tx := &redshiftDataTx{
+	tx := &redshiftDataTxEmulated{
 		onRollback: func() error {
 			if !conn.inTx {
 				return ErrNotInTx
