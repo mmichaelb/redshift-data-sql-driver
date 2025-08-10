@@ -18,8 +18,9 @@ type RedshiftDataConfig struct {
 	WorkgroupName     *string
 	SecretsARN        *string
 
-	Timeout time.Duration
-	Polling time.Duration
+	Timeout          time.Duration
+	Polling          time.Duration
+	BlockingRequests bool
 
 	Params             url.Values
 	RedshiftDataOptFns []func(*redshiftdata.Options)
@@ -70,6 +71,16 @@ func (cfg *RedshiftDataConfig) setParams(params url.Values) error {
 	}
 	if params.Has("region") {
 		cfg = cfg.WithRegion(params.Get("region"))
+	}
+	if params.Has("requestMode") {
+		requestMode := params.Get("requestMode")
+		if requestMode == "blocking" {
+			cfg.BlockingRequests = true
+		} else if requestMode == "non-blocking" {
+			cfg.BlockingRequests = false
+		} else {
+			return fmt.Errorf("invalid param requestMode: %s, must be 'blocking' or 'non-blocking' (default: 'non-blocking')", requestMode)
+		}
 	}
 	if len(cfg.Params) == 0 {
 		cfg.Params = nil

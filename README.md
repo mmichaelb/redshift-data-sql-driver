@@ -8,7 +8,7 @@
 
 Redshift-Data API SQL Driver for Go's [database/sql](https://pkg.go.dev/database/sql) package
 
-## Usage 
+## Usage
 
 for example:
 
@@ -16,36 +16,36 @@ for example:
 package main
 
 import (
-    "context"
-    "database/sql"
-    "log"
+	"context"
+	"database/sql"
+	"log"
 
-    _ "github.com/mashiike/redshift-data-sql-driver"
+	_ "github.com/mashiike/redshift-data-sql-driver"
 )
 
 func main() {
-    db, err := sql.Open("redshift-data", "workgroup(default)/dev?timeout=1m")
-    if err != nil {
-        log.Fatalln(err)
-    }
-    defer db.Close()
-    rows, err := db.QueryContext(
-        context.Background(),
-        `SELECT table_schema,table_name,table_type FROM svv_tables WHERE table_schema not like :ignore_schema`,
-        sql.Named("ignore_schema", "pg_%"),
-    )
-    if err != nil {
-        log.Fatalln(err)
-    }
-    for rows.Next() {
-        var schema, name, tableType string
-        err := rows.Scan(&schema, &name, &tableType)
-        if err != nil {
-            log.Println(err)
-            return
-        }
-        log.Printf("%s.%s\t%s", schema, name, tableType)
-    }
+	db, err := sql.Open("redshift-data", "workgroup(default)/dev?timeout=1m")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer db.Close()
+	rows, err := db.QueryContext(
+		context.Background(),
+		`SELECT table_schema,table_name,table_type FROM svv_tables WHERE table_schema not like :ignore_schema`,
+		sql.Named("ignore_schema", "pg_%"),
+	)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	for rows.Next() {
+		var schema, name, tableType string
+		err := rows.Scan(&schema, &name, &tableType)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Printf("%s.%s\t%s", schema, name, tableType)
+	}
 }
 ```
 
@@ -60,6 +60,8 @@ The DSN parameters include
 - `timeout`: Timeout for query execution. default = `15m0s`
 - `polling`: Interval to check for the end of a running query. default = `10ms`
 - `region`: Redshift Data API's region. Default is environment setting
+- `requestMode`: Whether to wait for every request to finish (`blocking`) or to execute them asynchronously (
+  `non-blocking`). Default is `non-blocking`.
 
 Parameter settings are in the format of URL query parameter
 
@@ -70,32 +72,31 @@ Parameter settings are in the format of URL query parameter
 The Redshift Data API does not have an interface for pasting transactions and querying sequentially.
 Therefore, we have implemented an unusual implementation.
 
-
 ```go
 package main
 
 import (
-    "context"
-    "database/sql"
-    "log"
+	"context"
+	"database/sql"
+	"log"
 
-    _ "github.com/mashiike/redshift-data-sql-driver"
+	_ "github.com/mashiike/redshift-data-sql-driver"
 )
 
 func main() {
-    db, err := sql.Open("redshift-data", "workgroup(default)/dev?timeout=1m")
-    if err != nil {
-        log.Fatalln(err)
-    }
-    defer db.Close()
-    tx, err := db.BeginTx(context.Background(), nil)
-    if err != nil {
-        log.Fatalln(err)
-    }
-    tx.ExecContext(context.Background(), "INSERT INTO foo VALUES (1)")
-    tx.ExecContext(context.Background(), "INSERT INTO foo VALUES (2)")
-    tx.ExecContext(context.Background(), "INSERT INTO foo VALUES (3)")
-    tx.Commit() // BatchExecuteStatement API is called here, and the queries called during the transaction are executed together
+	db, err := sql.Open("redshift-data", "workgroup(default)/dev?timeout=1m")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer db.Close()
+	tx, err := db.BeginTx(context.Background(), nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	tx.ExecContext(context.Background(), "INSERT INTO foo VALUES (1)")
+	tx.ExecContext(context.Background(), "INSERT INTO foo VALUES (2)")
+	tx.ExecContext(context.Background(), "INSERT INTO foo VALUES (3)")
+	tx.Commit() // BatchExecuteStatement API is called here, and the queries called during the transaction are executed together
 }
 ```
 
