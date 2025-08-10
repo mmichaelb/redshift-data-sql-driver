@@ -18,9 +18,12 @@ type RedshiftDataConfig struct {
 	WorkgroupName     *string
 	SecretsARN        *string
 
-	Timeout          time.Duration
-	Polling          time.Duration
+	Timeout time.Duration
+	Polling time.Duration
+	// BlockingRequests indicates whether the requests should be waiting for each other or not.
 	BlockingRequests bool
+	// EmulateTransactions indicates whether the driver should emulate transactions by gathering the statements and calling BatchExecuteStatement.
+	EmulateTransactions bool
 
 	Params             url.Values
 	RedshiftDataOptFns []func(*redshiftdata.Options)
@@ -47,6 +50,9 @@ func (cfg *RedshiftDataConfig) String() string {
 	}
 	if cfg.BlockingRequests {
 		params.Add("requestMode", "blocking")
+	}
+	if !cfg.EmulateTransactions {
+		params.Add("transactionMode", "non-transactional")
 	}
 	encodedParams := params.Encode()
 	if encodedParams != "" {
@@ -85,6 +91,16 @@ func (cfg *RedshiftDataConfig) setParams(params url.Values) error {
 			return fmt.Errorf("invalid param requestMode: %s, must be 'blocking' or 'non-blocking' (default: 'non-blocking')", requestMode)
 		}
 		cfg.Params.Del("requestMode")
+	}
+	cfg.EmulateTransactions = true
+	if params.Has("transactionMode") {
+		transactionMode := params.Get("transactionMode")
+		if transactionMode == "non-transactional" {
+			cfg.EmulateTransactions = false
+		} else {
+			return fmt.Errorf("invalid param transactionMode: %s, must be 'transactional' or 'non-transactional' (default: 'non-transactional')", transactionMode)
+		}
+		cfg.Params.Del("transactionMode")
 	}
 	if len(cfg.Params) == 0 {
 		cfg.Params = nil

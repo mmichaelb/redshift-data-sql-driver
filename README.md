@@ -62,6 +62,9 @@ The DSN parameters include
 - `region`: Redshift Data API's region. Default is environment setting
 - `requestMode`: Whether to wait for every request to finish (`blocking`) or to execute them asynchronously (
   `non-blocking`). Default is `non-blocking`.
+- `transactionMode`: Whether to execute queries in a transaction using BatchExecuteStatement (`transactional`) or not (
+  `non-transactional`). Default
+  is `transactional`.
 
 Parameter settings are in the format of URL query parameter
 
