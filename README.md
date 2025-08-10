@@ -1,10 +1,10 @@
 # redshift-data-sql-driver
 
-[![Documentation](https://godoc.org/github.com/mashiike/redshift-data-sql-driver?status.svg)](https://godoc.org/github.com/mashiike/redshift-data-sql-driver)
-![Latest GitHub tag](https://img.shields.io/github/tag/mashiike/redshift-data-sql-driver.svg)
-![Github Actions test](https://github.com/mashiike/redshift-data-sql-driver/workflows/Test/badge.svg?branch=main)
-[![Go Report Card](https://goreportcard.com/badge/mashiike/redshift-data-sql-driver)](https://goreportcard.com/report/mashiike/redshift-data-sql-driver)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mashiike/redshift-data-sql-driver/blob/master/LICENSE)
+[![Documentation](https://godoc.org/github.com/mmichaelb/redshift-data-sql-driver?status.svg)](https://godoc.org/github.com/mmichaelb/redshift-data-sql-driver)
+![Latest GitHub tag](https://img.shields.io/github/tag/mmichaelb/redshift-data-sql-driver.svg)
+![Github Actions test](https://github.com/mmichaelb/redshift-data-sql-driver/workflows/Test/badge.svg?branch=main)
+[![Go Report Card](https://goreportcard.com/badge/mmichaelb/redshift-data-sql-driver)](https://goreportcard.com/report/mmichaelb/redshift-data-sql-driver)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mmichaelb/redshift-data-sql-driver/blob/master/LICENSE)
 
 Redshift-Data API SQL Driver for Go's [database/sql](https://pkg.go.dev/database/sql) package
 
@@ -20,7 +20,7 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/mashiike/redshift-data-sql-driver"
+	_ "github.com/mmichaelb/redshift-data-sql-driver"
 )
 
 func main() {
@@ -83,7 +83,7 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/mashiike/redshift-data-sql-driver"
+	_ "github.com/mmichaelb/redshift-data-sql-driver"
 )
 
 func main() {

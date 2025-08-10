@@ -1,4 +1,4 @@
-module github.com/mashiike/redshift-data-sql-driver
+module github.com/mmichaelb/redshift-data-sql-driver
 
 go 1.22
 
