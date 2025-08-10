@@ -3,6 +3,7 @@
 ## unreleased
 
 - implement blocking requests by @mmichaelb in https://github.com/mmichaelb/redshift-data-sql-driver/pull/1
+- implement non-transactional transaction mode by @mmichaelb in https://github.com/mmichaelb/redshift-data-sql-driver/pull/8
 
 ## [v0.2.0](https://github.com/mashiike/redshift-data-sql-driver/compare/v0.1.0...v0.2.0) - 2023-09-17
 - Bump github.com/aws/aws-sdk-go-v2/service/redshiftdata from 1.16.13 to 1.16.14 by @dependabot in https://github.com/mashiike/redshift-data-sql-driver/pull/7
