@@ -41,7 +41,7 @@ func newConn(client RedshiftDataClient, cfg *RedshiftDataConfig) *redshiftDataCo
 }
 
 func (conn *redshiftDataConn) PrepareContext(ctx context.Context, query string) (driver.Stmt, error) {
-	return nil, fmt.Errorf("prepared statment %w", ErrNotSupported)
+	return nil, fmt.Errorf("prepared statement: %w", ErrNotSupported)
 }
 
 func (conn *redshiftDataConn) Prepare(query string) (driver.Stmt, error) {
@@ -156,7 +156,7 @@ func (conn *redshiftDataConn) ExecContext(ctx context.Context, query string, arg
 		conn.sqls = append(conn.sqls, query)
 		result := &redshiftDataDelayedResult{}
 		conn.delayedResult = append(conn.delayedResult, result)
-		debugLogger.Printf("delayedResult[%d] creaed for %q", len(conn.delayedResult)-1, query)
+		debugLogger.Printf("delayedResult[%d] created for %q", len(conn.delayedResult)-1, query)
 		return result, nil
 	}
 
@@ -234,10 +234,10 @@ func (conn *redshiftDataConn) executeStatement(ctx context.Context, params *reds
 
 	executeOutput, err := conn.client.ExecuteStatement(ctx, params)
 	if err != nil {
-		return nil, nil, fmt.Errorf("execute statement:%w", err)
+		return nil, nil, fmt.Errorf("execute statement: %w", err)
 	}
 	queryStart := time.Now()
-	debugLogger.Printf("[%s] success execute statement: %s", *executeOutput.Id, coalesce(params.Sql))
+	debugLogger.Printf("[%s] success executing statement: %s", *executeOutput.Id, coalesce(params.Sql))
 	describeOutput, err := conn.waitWithCancel(ctx, executeOutput.Id, queryStart)
 	if err != nil {
 		return nil, nil, err
@@ -278,7 +278,7 @@ func (conn *redshiftDataConn) batchExecuteStatement(ctx context.Context, params 
 		return nil, nil, fmt.Errorf("execute statement:%w", err)
 	}
 	queryStart := time.Now()
-	debugLogger.Printf("[%s] success execute statement: %d sqls", *batchExecuteOutput.Id, len(params.Sqls))
+	debugLogger.Printf("[%s] success executing statement: %d sqls", *batchExecuteOutput.Id, len(params.Sqls))
 	describeOutput, err := conn.waitWithCancel(ctx, batchExecuteOutput.Id, queryStart)
 	if err != nil {
 		return nil, nil, err
@@ -320,7 +320,7 @@ func (conn *redshiftDataConn) wait(ctx context.Context, id *string, queryStart t
 	}
 	ectx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	debugLogger.Printf("[%s] wating finsih query: elapsed_time=%s", *id, time.Since(queryStart))
+	debugLogger.Printf("[%s] waiting for query to finish: elapsed_time=%s", *id, time.Since(queryStart))
 	describeOutput, err := conn.client.DescribeStatement(ctx, &redshiftdata.DescribeStatementInput{
 		Id: id,
 	})
@@ -346,12 +346,12 @@ func (conn *redshiftDataConn) wait(ctx context.Context, id *string, queryStart t
 			}
 			return nil, ErrConnClosed
 		}
-		debugLogger.Printf("[%s] wating finsih query: elapsed_time=%s", *id, time.Since(queryStart))
+		debugLogger.Printf("[%s] waiting for query to finish: elapsed_time=%s", *id, time.Since(queryStart))
 		describeOutput, err = conn.client.DescribeStatement(ctx, &redshiftdata.DescribeStatementInput{
 			Id: id,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("describe statement:%w", err)
+			return nil, fmt.Errorf("describe statement: %w", err)
 		}
 		if isFinishedStatus(describeOutput.Status) {
 			return describeOutput, nil
@@ -376,12 +376,12 @@ func (conn *redshiftDataConn) waitWithCancel(ctx context.Context, id *string, qu
 	if isFinishedStatus(desc.Status) {
 		return desc, err
 	}
-	debugLogger.Printf("[%s] try cancel statement", *id)
+	debugLogger.Printf("[%s] trying to cancel statement", *id)
 	output, cErr := conn.client.CancelStatement(cctx, &redshiftdata.CancelStatementInput{
 		Id: id,
 	})
 	if cErr != nil {
-		errLogger.Printf("[%s] failed cancel statement: %v", *id, err)
+		errLogger.Printf("[%s] failed canceling statement: %v", *id, err)
 		return desc, err
 	}
 	if !*output.Status {
