@@ -58,6 +58,9 @@ func (conn *redshiftDataConn) Close() error {
 }
 
 func (conn *redshiftDataConn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
+	if !conn.cfg.EmulateTransactions {
+		return &redshiftDataTxNonTransactional{}, nil
+	}
 	if conn.inTx {
 		return nil, ErrInTx
 	}
