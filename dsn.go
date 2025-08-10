@@ -45,6 +45,9 @@ func (cfg *RedshiftDataConfig) String() string {
 	} else {
 		params.Del("polling")
 	}
+	if cfg.BlockingRequests {
+		params.Add("requestMode", "blocking")
+	}
 	encodedParams := params.Encode()
 	if encodedParams != "" {
 		return base + "?" + encodedParams
@@ -81,6 +84,7 @@ func (cfg *RedshiftDataConfig) setParams(params url.Values) error {
 		} else {
 			return fmt.Errorf("invalid param requestMode: %s, must be 'blocking' or 'non-blocking' (default: 'non-blocking')", requestMode)
 		}
+		cfg.Params.Del("requestMode")
 	}
 	if len(cfg.Params) == 0 {
 		cfg.Params = nil

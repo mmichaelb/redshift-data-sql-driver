@@ -11,6 +11,7 @@ import (
 
 func TestRedshiftDataConfig__String(t *testing.T) {
 	cases := []struct {
+		name     string
 		dsn      *RedshiftDataConfig
 		expected string
 	}{
@@ -43,6 +44,15 @@ func TestRedshiftDataConfig__String(t *testing.T) {
 				Polling:           5 * time.Millisecond,
 			},
 			expected: "admin@cluster(default)/dev?polling=5ms",
+		},
+		{
+			dsn: &RedshiftDataConfig{
+				ClusterIdentifier: aws.String("default"),
+				DbUser:            aws.String("admin"),
+				Database:          aws.String("dev"),
+				BlockingRequests:  true,
+			},
+			expected: "admin@cluster(default)/dev?requestMode=blocking",
 		},
 		{
 			dsn: &RedshiftDataConfig{
