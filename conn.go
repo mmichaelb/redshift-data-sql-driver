@@ -14,12 +14,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 )
 
+var requestMutex *sync.Mutex
+
 type redshiftDataConn struct {
-	client       RedshiftDataClient
-	cfg          *RedshiftDataConfig
-	aliveCh      chan struct{}
-	isClosed     bool
-	requestMutex *sync.Mutex
+	client   RedshiftDataClient
+	cfg      *RedshiftDataConfig
+	aliveCh  chan struct{}
+	isClosed bool
 
 	inTx          bool
 	txOpts        driver.TxOptions
@@ -28,15 +29,13 @@ type redshiftDataConn struct {
 }
 
 func newConn(client RedshiftDataClient, cfg *RedshiftDataConfig) *redshiftDataConn {
-	var requestMutex *sync.Mutex
-	if cfg.BlockingRequests {
+	if cfg.BlockingRequests && requestMutex == nil {
 		requestMutex = &sync.Mutex{}
 	}
 	return &redshiftDataConn{
-		client:       client,
-		cfg:          cfg,
-		aliveCh:      make(chan struct{}),
-		requestMutex: requestMutex,
+		client:  client,
+		cfg:     cfg,
+		aliveCh: make(chan struct{}),
 	}
 }
 
@@ -222,8 +221,8 @@ func convertArgsToParameters(args []driver.NamedValue) []types.SqlParameter {
 
 func (conn *redshiftDataConn) executeStatement(ctx context.Context, params *redshiftdata.ExecuteStatementInput) (*redshiftdata.GetStatementResultPaginator, *redshiftdata.DescribeStatementOutput, error) {
 	if conn.cfg.BlockingRequests {
-		conn.requestMutex.Lock()
-		defer conn.requestMutex.Unlock()
+		requestMutex.Lock()
+		defer requestMutex.Unlock()
 	}
 	debugLogger.Printf("query: %s", coalesce(params.Sql))
 	params.ClusterIdentifier = conn.cfg.ClusterIdentifier
@@ -264,8 +263,8 @@ func (conn *redshiftDataConn) executeStatement(ctx context.Context, params *reds
 
 func (conn *redshiftDataConn) batchExecuteStatement(ctx context.Context, params *redshiftdata.BatchExecuteStatementInput) ([]*redshiftdata.GetStatementResultPaginator, *redshiftdata.DescribeStatementOutput, error) {
 	if conn.cfg.BlockingRequests {
-		conn.requestMutex.Lock()
-		defer conn.requestMutex.Unlock()
+		requestMutex.Lock()
+		defer requestMutex.Unlock()
 	}
 	params.ClusterIdentifier = conn.cfg.ClusterIdentifier
 	params.Database = conn.cfg.Database
