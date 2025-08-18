@@ -15,6 +15,7 @@ import (
 )
 
 var requestMutex *sync.Mutex
+var transactionMutex *sync.Mutex
 
 type redshiftDataConn struct {
 	client   RedshiftDataClient
@@ -31,6 +32,9 @@ type redshiftDataConn struct {
 func newConn(client RedshiftDataClient, cfg *RedshiftDataConfig) *redshiftDataConn {
 	if cfg.BlockingRequests && requestMutex == nil {
 		requestMutex = &sync.Mutex{}
+	}
+	if !cfg.EmulateTransactions && transactionMutex == nil {
+		transactionMutex = &sync.Mutex{}
 	}
 	return &redshiftDataConn{
 		client:  client,
@@ -58,6 +62,7 @@ func (conn *redshiftDataConn) Close() error {
 
 func (conn *redshiftDataConn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
 	if !conn.cfg.EmulateTransactions {
+		transactionMutex.Lock()
 		return &redshiftDataTxNonTransactional{}, nil
 	}
 	if conn.inTx {
