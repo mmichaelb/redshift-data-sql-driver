@@ -242,10 +242,10 @@ func (conn *redshiftDataConn) executeStatement(ctx context.Context, params *reds
 		return nil, nil, err
 	}
 	if describeOutput.Status == types.StatusStringAborted {
-		return nil, nil, fmt.Errorf("query aborted: %s", *describeOutput.Error)
+		return nil, nil, fmt.Errorf("query aborted (sql: %q): %s", *params.Sql, *describeOutput.Error)
 	}
 	if describeOutput.Status == types.StatusStringFailed {
-		return nil, nil, fmt.Errorf("query failed: %s", *describeOutput.Error)
+		return nil, nil, fmt.Errorf("query failed (sql: %q): %s", *params.Sql, *describeOutput.Error)
 	}
 	if describeOutput.Status != types.StatusStringFinished {
 		return nil, nil, fmt.Errorf("query status is not finished: %s", describeOutput.Status)
@@ -277,21 +277,21 @@ func (conn *redshiftDataConn) batchExecuteStatement(ctx context.Context, params 
 		return nil, nil, fmt.Errorf("execute statement:%w", err)
 	}
 	queryStart := time.Now()
-	debugLogger.Printf("[%s] success executing statement: %d sqls", *batchExecuteOutput.Id, len(params.Sqls))
+	debugLogger.Printf("[%s] success executing batch statement: %d sqls", *batchExecuteOutput.Id, len(params.Sqls))
 	describeOutput, err := conn.waitWithCancel(ctx, batchExecuteOutput.Id, queryStart)
 	if err != nil {
 		return nil, nil, err
 	}
 	if describeOutput.Status == types.StatusStringAborted {
-		return nil, nil, fmt.Errorf("query aborted: %s", *describeOutput.Error)
+		return nil, nil, fmt.Errorf("batch query aborted: %s", *describeOutput.Error)
 	}
 	if describeOutput.Status == types.StatusStringFailed {
-		return nil, nil, fmt.Errorf("query failed: %s", *describeOutput.Error)
+		return nil, nil, fmt.Errorf("batch query failed: %s", *describeOutput.Error)
 	}
 	if describeOutput.Status != types.StatusStringFinished {
-		return nil, nil, fmt.Errorf("query status is not finished: %s", describeOutput.Status)
+		return nil, nil, fmt.Errorf("batch query is not finished: %s", describeOutput.Status)
 	}
-	debugLogger.Printf("[%s] success query: elapsed_time=%s", *batchExecuteOutput.Id, time.Since(queryStart))
+	debugLogger.Printf("[%s] success batch query: elapsed_time=%s", *batchExecuteOutput.Id, time.Since(queryStart))
 	ps := make([]*redshiftdata.GetStatementResultPaginator, len(params.Sqls))
 	for i, st := range describeOutput.SubStatements {
 		if *st.HasResultSet {
