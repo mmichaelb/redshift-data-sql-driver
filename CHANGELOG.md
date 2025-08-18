@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.4.0](https://github.com/mmichaelb/redshift-data-sql-driver/compare/v0.0.3...mmichaelb:redshift-data-sql-driver:v0.4.0) - 2025-08-18
+* Feature: Move request mutex to global scope by @mmichaelb in https://github.com/mmichaelb/redshift-data-sql-driver/commit/88ba5227a0dc007c0d0da8f05e073837e3b726cf
+* Feature: Non-transactional mode now uses local mutex by @mmichaelb in https://github.com/mmichaelb/redshift-data-sql-driver/commit/b93c507a79d60d2d6a035df1aa1f364bdbc3aa1f
+* Update aws-sdk-go-v2 monorepo by @renovate[bot] in https://github.com/mmichaelb/redshift-data-sql-driver/pull/10
+
 ## [v0.3.0](https://github.com/mashiike/redshift-data-sql-driver/compare/v0.2.0...mmichaelb:redshift-data-sql-driver:v0.3.0) - 2025-08-10
 * Feature: Blocking requests by @mmichaelb in https://github.com/mmichaelb/redshift-data-sql-driver/pull/1
 * Update actions/setup-go action to v5 by @renovate[bot] in https://github.com/mmichaelb/redshift-data-sql-driver/pull/7
