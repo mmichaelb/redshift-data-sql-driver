@@ -3,23 +3,17 @@ on: [push]
 
 jobs:
   test:
-    strategy:
-      matrix:
-        go:
-          - "1.22"
-          - "1.23"
-          - "1.24"
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go }}
-        id: go
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+        id: go
 
       - name: Build & Test
         run: |
