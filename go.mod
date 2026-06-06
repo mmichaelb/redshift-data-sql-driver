@@ -7,7 +7,7 @@ toolchain go1.26.4
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.12
 	github.com/aws/aws-sdk-go-v2/config v1.32.23
-	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.40.4
+	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.40.5
 	github.com/stretchr/testify v1.11.1
 )
 
