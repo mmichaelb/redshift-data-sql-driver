@@ -2,7 +2,7 @@ module github.com/mmichaelb/redshift-data-sql-driver
 
 go 1.24
 
-toolchain go1.26.5
+toolchain go1.26.6
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.43.5
