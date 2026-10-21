@@ -938,6 +938,8 @@ github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.49.3 h1:YXhgzPzyoPoGzO67wSQ
 github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.49.3/go.mod h1:pFcaOGVDHVKJdOWF2pSFPKWqiODLfZpe4lJgfjeDqN8=
 github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.50.0 h1:L2rjxasPvbqqAM4nyVUvYwemGZ/L0uMKMVzrmcW7v9o=
 github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.50.0/go.mod h1:pFcaOGVDHVKJdOWF2pSFPKWqiODLfZpe4lJgfjeDqN8=
+github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.51.0 h1:Xi+S6zWZSAJz5xLQoQFs2ix9Jz6zuzeemsYXrv75EVI=
+github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.51.0/go.mod h1:pFcaOGVDHVKJdOWF2pSFPKWqiODLfZpe4lJgfjeDqN8=
 github.com/aws/aws-sdk-go-v2/service/signin v1.0.1 h1:BDgIUYGEo5TkayOWv/oBLPphWwNm/A91AebUjAu5L5g=
 github.com/aws/aws-sdk-go-v2/service/signin v1.0.1/go.mod h1:iS6EPmNeqCsGo+xQmXv0jIMjyYtQfnwg36zl2FwEouk=
 github.com/aws/aws-sdk-go-v2/service/signin v1.0.2 h1:MxMBdKTYBjPQChlJhi4qlEueqB1p1KcbTEa7tD5aqPs=
